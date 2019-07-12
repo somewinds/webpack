@@ -1,5 +1,5 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('HtmlWebpackPlugin');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -8,7 +8,8 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js'
   },
-  mode: 'production',
+  // mode: 'production',
+  mode: 'development',
   module: {
     rules: [
       {
@@ -54,6 +55,21 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html'
-    })
-  ]
+    }),
+    new webpack.HotModuleReplacementPlugin()
+  ],
+  devServer: {
+    contentBase: './dist',
+    hot: true
+  }
+  /* watch: true, // 默认为false，不开启
+  // 只有 watch 开启时 watchOptions 才有意义
+  watchOptions: {
+    // 默认为空，不监听的文件或文件夹，支持正则匹配
+    ignore: /node_modules/,
+    // 监听到变化发生后会等300ms再去执行，默认 300ms
+    aggregateTimeout: 300,
+    // 判断文件是否发生变化是通过不停询问系统指定文件有没有变化实现的，默认 1000ms 询问一次
+    poll: 1000
+  } */
 };

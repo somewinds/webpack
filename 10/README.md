@@ -1,4 +1,4 @@
-### 解析ES6和React JSX
+### 15. 解析ES6和React JSX
 
 #### 解析ES6
 ```
@@ -90,7 +90,7 @@ import "./react-dom-search.js";
 
 ---
 
-### 解析CSS、Less和Sass
+### 16. 解析CSS、Less和Sass
 
 #### 解析CSS
 ```
@@ -169,7 +169,7 @@ import './search.less';
 
 ---
 
-### 解析图片和文字
+### 17. 解析图片和文字
 
 #### 解析图片
 ```
@@ -217,4 +217,61 @@ webpack.config.js
           }
         ]
       }
+```
+
+### 18. webpack中的文件监听
+
+#### 方法一：
+
+package.json
+```
+"watch": "webpack --watch"
+```
+
+#### 方法二：
+
+webpack.config.js
+```
+
+module.exports = {
+  watch: true, // 默认为false，不开启
+  // 只有 watch 开启时 watchOptions 才有意义
+  watchOptions: {
+    // 默认为空，不监听的文件或文件夹，支持正则匹配
+    ignore: /node_modules/,
+    // 监听到变化发生后会等300ms再去执行，默认 300ms
+    aggregateTimeout: 300,
+    // 判断文件是否发生变化是通过不停询问系统指定文件有没有变化实现的，默认 1000ms 询问一次
+    poll: 1000
+  }
+};
+```
+
+### 19. webpack中的热更新及原理分析
+
+```
+npm i webpack-dev-server -D
+```
+
+package.json
+```
+    "dev": "webpack-dev-server --open --inline --progress"
+```
+[开发中 Server(devServer)](https://www.webpackjs.com/configuration/dev-server/#devserver-inline)
+- -- open 编译完成后打开浏览器
+- -- inline 这意味着一段处理实时重载的脚本被插入到你的包(bundle)中，并且构建消息将会出现在浏览器控制台。（看不出有什么区别）
+- -- progress 将运行进度输出到控制台
+
+webpack.config.js
+```
+const webpack = require('webpack');
+
+
+  plugins: [
+    new webpack.HotModuleReplacementPlugin()
+  ],
+  devServer: {
+    contentBase: './dist',
+    hot: true
+  }
 ```
