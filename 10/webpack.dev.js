@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const CleanWebpackPlugin = require('clean-webpack-plugin'); // v2+用法
+const { CleanWebpackPlugin } = require('clean-webpack-plugin'); // v3+用法
 
 module.exports = {
   entry: './src/index.js',
@@ -56,7 +58,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.html'
     }),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new CleanWebpackPlugin()
   ],
   devServer: {
     contentBase: './dist',

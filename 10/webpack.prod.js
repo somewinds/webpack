@@ -3,6 +3,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 const Cssnano = require('cssnano');
+// const CleanWebpackPlugin = require('clean-webpack-plugin'); // v2+用法
+const { CleanWebpackPlugin } = require('clean-webpack-plugin'); // v3+用法
 
 module.exports = {
   entry: './src/index.js',
@@ -79,6 +81,8 @@ module.exports = {
     new OptimizeCssAssetsWebpackPlugin({
       assetNameRegExp: /\.css$/,
       cssProcessor: Cssnano
-    })
+    }),
+    // 构建前自动清理dist
+    new CleanWebpackPlugin()
   ],
 };

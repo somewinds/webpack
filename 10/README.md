@@ -405,5 +405,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
   ],
 ```
 
+### 22. 自动清理构建目录产物
 
+```
+npm i clean-webpack-plugin -D
+```
+
+
+[clean-webpack-plugin 使用说明](https://www.npmjs.com/package/clean-webpack-plugin)
+
+webpack.prod.js、webpack.dev.js
+```
+// const CleanWebpackPlugin = require('clean-webpack-plugin'); // v2+用法
+const { CleanWebpackPlugin } = require('clean-webpack-plugin'); // v3+用法
+
+  plugins: [
+    // 构建前自动清理dist
+    new CleanWebpackPlugin()
+  ],
+```
 
