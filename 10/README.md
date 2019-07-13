@@ -348,3 +348,62 @@ module.exports = {
   ],
 };
 ```
+
+### 21. HTML、CSS和JS代码压缩
+
+```
+npm i optimize-css-assets-plugin cssnano -D
+```
+
+webpack.prod.js
+```
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+const Cssnano = require('cssnano');
+
+  plugins: [
+    // 提取出css文件
+    new MiniCssExtractPlugin({
+      filename: '[name]_[contenthash:8].css'
+    }),
+    // css文件压缩
+    new OptimizeCssAssetsWebpackPlugin({
+      assetNameRegExp: /\.css$/,
+      cssProcessor: Cssnano
+    })
+  ],
+```
+
+#### html模板压缩
+```
+npm i html-webpack-plugin -D
+```
+
+[html-webpack-plugin 配置](https://github.com/jantimon/html-webpack-plugin)  
+[html-webpack-plugin 内 minify 配置](https://github.com/kangax/html-minifier)
+
+webpack.prod.js
+```
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+  plugins: [
+    // html模板压缩
+    new HtmlWebpackPlugin({
+      // template: './src/index.html'
+      template: path.join(__dirname, 'src/index.html'), // 模板位置
+      filename: 'index.html', // 打包出的html文件名称
+      chunks: '[index]', // html使用那些chunk
+      inject: true, // | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中，如果设置为 true 或者 body，所有的 javascript 资源将被放置到 body 元素的底部，'head' 将放置到 head 元素中。
+      minify: {
+        html5: true, // true 根据HTML5规范解析输入
+        collapseWhitespace: true, // 折叠构成文档树中文本节点的空白，默认 false：true 移除空格，false 保留空格
+        preserveLineBreaks: false, // 保留换行符，默认false，必须与collapseWhitespace=true一起使用：true 保留换行符，false 保留换行符
+        minifyCSS: true, // 在样式元素和样式属性中缩小CSS（使用干净的CSS），默认 false：true 压缩模板内的css
+        minifyJS: true, // 在脚本元素和事件属性中缩小javascript（使用uglifyjs），默认 false：true 压缩模板内的js，并移除注释
+        removeComments: true // 删除HTML注释，默认 false：true 删除html内的注释，只限html部分
+      }
+    }),
+  ],
+```
+
+
+
