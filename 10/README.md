@@ -275,3 +275,76 @@ const webpack = require('webpack');
     hot: true
   }
 ```
+
+### 20. 文件指纹策略：chunkhash、contenthash和hash
+
+package.json
+```
+"build": "webpack --config webpack.prod.js",
+"dev": "webpack-dev-server --open --inline --progress --config webpack.dev.js"
+```
+
+#### bundle.js生成 hash 指纹，图片生成 hash 指纹
+webpack.prod.js
+```
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+  output: {
+    filename: 'bundle_[chunkhash:8].js'
+  },
+  mode: 'production',
+  module: {
+    [
+      {
+        test: /\.(jpg|png|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name]_[hash:8].[ext]'
+            }
+          }
+        ]
+      },
+    ]
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
+    }),
+  ],
+};
+
+```
+
+#### css文件提取出来并生成指纹
+```
+npm i mini-css-extract-plugin -D
+
+```
+
+webpack.prod.js
+```
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          // 'style-loader',
+          MiniCssExtractPlugin.loader,
+          'css-loader'
+        ]
+      },
+    ]
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name]_[contenthash:8].css'
+    })
+  ],
+};
+```
