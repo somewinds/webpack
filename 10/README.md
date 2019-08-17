@@ -469,4 +469,87 @@ npm i -D postcss autoprefixer
 
 
 ### 24. 移动端CSS px自动转换成rem
+px2rem、手淘 lib-flexible 库
+
+```
+npm i -D px2rem-loader
+```
+
+10\webpack.prod.js
+
+module.rules 里less-loader应该写在px2rem-loader后面，不然会报错
+```
+      {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader, // 编译less后，提取到css打包文件
+          // 'style-loader',
+          'css-loader',
+          {
+            loader: 'px2rem-loader',
+            options: {
+              remUnit: 75, // rem单位，1rem = 75px
+              remPrecesion: 8 // 转换为rem后的小数位数
+            }
+          },
+          'less-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [
+                require('autoprefixer')({
+                  browsers: ['last 2 version', '>1%', 'ios 7']
+                })
+              ]
+            }
+          },
+        ]
+      },
+```
+
+
+### 25. 静态资源内联
+
+代码层面：
+- 页面框架的初始化脚本
+- 上报相关打点
+- css 内联避免页面闪动
+
+请求层面：
+- 减少 HTTP 网络请求数
+- 小图片或者字体内联 url-loader：小于 limit 自动内联
+
+##### HTML 和 JS 内联
+1. raw-loader 内联 html
+2. raw-loader 内联 JS
+3. 使用v0.5版本
+
+##### CSS 内联
+1. 借助 style-loader
+```
+options: {
+  singleton: true // 将所有的style标签合并成一个
+}
+```
+2. html-inline-css-webpack-plugin
+
+
+```
+npm i -D lib-flexible raw-loader
+```
+
+10\src\meta.html
+```
+<meta name="description" content="后台管理系统，包括日常工作流程，财务管理，数据分析，个人工作台等">
+```
+
+10\src\index.html
+```
+<head>
+  ${ require('raw-loader!./meta.html') }
+  <script>${require('raw-loader!babel-loader!../node_modules/lib-flexible/flexible.js')}</script>
+</head>
+```
+
+
 

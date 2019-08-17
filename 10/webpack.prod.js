@@ -30,20 +30,27 @@ module.exports = {
       {
         test: /\.less$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          MiniCssExtractPlugin.loader, // 编译less后，提取到css打包文件
           // 'style-loader',
           'css-loader',
+          {
+            loader: 'px2rem-loader',
+            options: {
+              remUnit: 75, // rem单位，1rem = 75px
+              remPrecesion: 8 // 转换为rem后的小数位数
+            }
+          },
           'less-loader',
           {
             loader: 'postcss-loader',
             options: {
               plugins: () => [
                 require('autoprefixer')({
-                  // browsers: ['last 2 version', '>1%', 'ios 7']
+                  browsers: ['last 2 version', '>1%', 'ios 7']
                 })
               ]
             }
-          }
+          },
         ]
       },
       /* {

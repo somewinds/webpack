@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  ${ require('raw-loader!./meta.html') }
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script>${require('raw-loader!babel-loader!../node_modules/lib-flexible/flexible.js')}</script>
   <title>Document</title>
 </head>
 <body>
