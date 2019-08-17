@@ -425,3 +425,48 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin'); // v3+用法
   ],
 ```
 
+
+### 23. PostCSS插件autoprefixer自动补齐CSS3前缀
+
+```
+npm i -D postcss autoprefixer
+```
+
+10\src\search.css
+```
+.search {
+  color: red;
+  transition: all 0.4s ease;
+}
+
+.search:hover {
+  transform: rotate(90deg);
+}
+```
+
+10\webpack.prod.js
+```
+      {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          // 'style-loader',
+          'css-loader',
+          'less-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [
+                require('autoprefixer')({
+                  // browsers: ['last 2 version', '>1%', 'ios 7']
+                })
+              ]
+            }
+          }
+        ]
+      },
+```
+
+
+### 24. 移动端CSS px自动转换成rem
+
