@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './search.css';
 import './search.less';
-import bakugou from './images/bakugou.jpg';
+import bakugou from '../images/bakugou.jpg';
 
 class Search extends React.Component {
   render() {

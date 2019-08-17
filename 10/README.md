@@ -551,5 +551,115 @@ npm i -D lib-flexible raw-loader
 </head>
 ```
 
+### 26. 多页面应用打包通用方案
 
+entry 用法：
+
+10\webpack.prod.js
+```
+
+  entry: {
+    index: './src/index/index.js',
+    search: './src/search/index.js'
+  },
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: 'bundle_[name]_[chunkhash:8].js'
+  },
+  plugins: [
+    // html模板及压缩
+    new HtmlWebpackPlugin({
+      // template: './src/index.html'
+      template: path.join(__dirname, 'src/index.html'), // 模板位置
+      filename: 'index.html', // 打包出的html文件名称
+      chunks: '[index]', // html使用那些chunk，包含所有入口文件
+      inject: true, // | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中，如果设置为 true 或者 body，所有的 javascript 资源将被放置到 body 元素的底部，'head' 将放置到 head 元素中。
+      minify: {
+        html5: true, // true 根据HTML5规范解析输入
+        collapseWhitespace: true, // 折叠构成文档树中文本节点的空白，默认 false：true 移除空格，false 保留空格
+        preserveLineBreaks: false, // 保留换行符，默认false，必须与collapseWhitespace=true一起使用：true 保留换行符，false 保留换行符
+        minifyCSS: true, // 在样式元素和样式属性中缩小CSS（使用干净的CSS），默认 false：true 压缩模板内的css
+        minifyJS: true, // 在脚本元素和事件属性中缩小javascript（使用uglifyjs），默认 false：true 压缩模板内的js，并移除注释
+        removeComments: true // 删除HTML注释，默认 false：true 删除html内的注释，只限html部分
+      }
+    }),
+    // html模板及压缩
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src/index.html'), // 模板位置
+      filename: 'search.html', // 打包出的html文件名称
+      chunks: ['search'], // html使用那些chunk，只包含search入口文件
+      inject: true, // | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中，如果设置为 true 或者 body，所有的 javascript 资源将被放置到 body 元素的底部，'head' 将放置到 head 元素中。
+      minify: {
+        html5: true, // true 根据HTML5规范解析输入
+        collapseWhitespace: true, // 折叠构成文档树中文本节点的空白，默认 false：true 移除空格，false 保留空格
+        preserveLineBreaks: false, // 保留换行符，默认false，必须与collapseWhitespace=true一起使用：true 保留换行符，false 保留换行符
+        minifyCSS: true, // 在样式元素和样式属性中缩小CSS（使用干净的CSS），默认 false：true 压缩模板内的css
+        minifyJS: true, // 在脚本元素和事件属性中缩小javascript（使用uglifyjs），默认 false：true 压缩模板内的js，并移除注释
+        removeComments: true // 删除HTML注释，默认 false：true 删除html内的注释，只限html部分
+      }
+    }),
+  ],
+```
+
+
+glob.sync 用法：
+```
+npm i -D glob
+```
+
+10\webpack.prod.js
+```
+
+const setMPA = () => {
+  const entry = {};
+  const htmlWebpackPlugins = [];
+
+  // 使用 glob.sync 以通配符的形式匹配到入口文件
+  const entryFiles = glob.sync(path.join(__dirname, './src/*/index.js'));
+  // console.log(entryFiles);
+  Object.keys(entryFiles)
+    .map(index => {
+      let entryFile = entryFiles[index];
+      const match = entryFile.match(/src\/(.*)\/index\.js/);
+      // console.log(match)
+      const pageName = match && match[1];
+
+      // entry[pageName] = `./${match[0]}`;
+      entry[pageName] = entryFile;
+
+      htmlWebpackPlugins.push(
+        // html模板及压缩
+        new HtmlWebpackPlugin({
+          // template: './src/index.html'
+          template: path.join(__dirname, 'src/index.html'), // 模板位置
+          filename: `${pageName}.html`, // 打包出的html文件名称
+          chunks: [pageName], // html使用那些chunk，包含所有入口文件
+          inject: true, // | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中，如果设置为 true 或者 body，所有的 javascript 资源将被放置到 body 元素的底部，'head' 将放置到 head 元素中。
+          minify: {
+            html5: true, // true 根据HTML5规范解析输入
+            collapseWhitespace: true, // 折叠构成文档树中文本节点的空白，默认 false：true 移除空格，false 保留空格
+            preserveLineBreaks: false, // 保留换行符，默认false，必须与collapseWhitespace=true一起使用：true 保留换行符，false 保留换行符
+            minifyCSS: true, // 在样式元素和样式属性中缩小CSS（使用干净的CSS），默认 false：true 压缩模板内的css
+            minifyJS: true, // 在脚本元素和事件属性中缩小javascript（使用uglifyjs），默认 false：true 压缩模板内的js，并移除注释
+            removeComments: true // 删除HTML注释，默认 false：true 删除html内的注释，只限html部分
+          }
+        }))
+
+    });
+  // console.log(entry, htmlWebpackPlugins)
+
+  return {
+    entry,
+    htmlWebpackPlugins
+  }
+}
+
+const { entry, htmlWebpackPlugins } = setMPA();
+
+module.exports = {
+  entry: entry,
+  plugins: [
+  ].concat(htmlWebpackPlugins),
+};
+```
 
