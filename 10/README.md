@@ -663,3 +663,9 @@ module.exports = {
 };
 ```
 
+### 27. 使用sourcemap
+
+作用：通过 sourcemap 定位到源代码  
+开发环境开启，线上环境关闭
+
+

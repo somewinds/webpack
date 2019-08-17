@@ -169,4 +169,5 @@ module.exports = {
     // 构建前自动清理dist
     new CleanWebpackPlugin()
   ].concat(htmlWebpackPlugins),
+  devtool: 'inline-source-map'
 };
