@@ -739,3 +739,59 @@ module.exports = {
 npm run build
 ```
 5. 打包后，react和react-dom被分离出单独的js文件：bundle_vendors_d1a4f3d7.js
+
+#### 提取其他公共文件：
+1. 10\src\common\index.js
+```
+export function common() {
+  return 'common module';
+}
+```
+2. 10\webpack.prod.js
+```
+  optimization: {
+    splitChunks: {
+      minSize: 0, // 最小文件大小，小于此大小的不进行分离打包
+      cacheGroups: {
+        commons: {
+          test: /(react|react-dom)/,
+          name: 'vendors',
+          chunks: 'all'
+        },
+        myCommons: {
+          name: 'my_commons',
+          chunks: 'all',
+          minChunks: 2 // 最小引用文件的次数
+        }
+      }
+    }
+  }
+
+
+  const entryFiles = glob.sync(path.join(__dirname, './src/!(common)*/index.js')); // 排除掉 common 文件夹
+  // html模板及压缩
+  new HtmlWebpackPlugin({
+    chunks: ['vendors', 'my_commons', pageName], // html使用那些chunk，包含所有入口文件
+  }))
+```
+3. 10\src\index\index.js
+```
+import { helloWorld } from "./helloworld";
+import "./react-dom-search.js";
+import { common } from "../common/index";
+
+document.write(helloWorld());
+document.write(common());
+```
+4. 10\src\search\index.js
+```
+import { common } from "../common/index";
+
+document.write('search 入口');
+document.write(common());
+```
+5. 打包
+```
+npm run build
+```
+6. 打包后，my_commons 被分离出单独的js文件：bundle_my_commons_08b106d8.js

@@ -13,7 +13,7 @@ const setMPA = () => {
   const htmlWebpackPlugins = [];
 
   // 使用 glob.sync 以通配符的形式匹配到入口文件
-  const entryFiles = glob.sync(path.join(__dirname, './src/*/index.js'));
+  const entryFiles = glob.sync(path.join(__dirname, './src/!(common)*/index.js')); // 排除掉 common 文件夹
   // console.log(entryFiles);
   Object.keys(entryFiles)
     .map(index => {
@@ -31,7 +31,7 @@ const setMPA = () => {
           // template: './src/index.html'
           template: path.join(__dirname, 'src/index.html'), // 模板位置
           filename: `${pageName}.html`, // 打包出的html文件名称
-          chunks: ['vendors', pageName], // html使用那些chunk，包含所有入口文件
+          chunks: ['vendors', 'my_commons', pageName], // html使用那些chunk，包含所有入口文件
           inject: true, // | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中，如果设置为 true 或者 body，所有的 javascript 资源将被放置到 body 元素的底部，'head' 将放置到 head 元素中。
           minify: {
             html5: true, // true 根据HTML5规范解析输入
@@ -187,11 +187,17 @@ module.exports = {
   devtool: 'inline-source-map',
   optimization: {
     splitChunks: {
+      minSize: 0, // 最小文件大小，小于此大小的不进行分离打包
       cacheGroups: {
         commons: {
           test: /(react|react-dom)/,
           name: 'vendors',
           chunks: 'all'
+        },
+        myCommons: {
+          name: 'my_commons',
+          chunks: 'all',
+          minChunks: 1 // 最小引用文件的次数
         }
       }
     }
