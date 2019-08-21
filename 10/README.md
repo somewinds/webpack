@@ -669,3 +669,45 @@ module.exports = {
 开发环境开启，线上环境关闭
 
 
+### 28. 提取页面公共资源
+
+#### html-webpack-externals-plugin
+1. 引入
+```
+npm i -D html-webpack-externals-plugin
+```
+2. 10\webpack.prod.js
+```
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+
+
+    new HtmlWebpackExternalsPlugin({
+      externals: [
+        {
+          module: 'react',
+          entry: 'https://11.url.cn/now/lib/16.2.0/react.min.js', // https://unpkg.com/react@16/umd/react.development.js
+          global: 'React'
+        }, 
+        {
+          module: 'react-dom',
+          entry: 'https://11.url.cn/now/lib/16.2.0/react-dom.min.js', // https://unpkg.com/react-dom@16/umd/react-dom.development.js
+          global: 'ReactDOM'
+        }
+      ]
+    })
+```
+3. 模板文件 10\src\index.html 引入CDN
+```
+<body>
+  <div id="app"></div>
+  <script type="text/javascript" src="https://11.url.cn/now/lib/16.2.0/react.min.js"></script>
+  <script type="text/javascript" src="https://11.url.cn/now/lib/16.2.0/react-dom.min.js"></script>
+</body>
+```
+4. 打包
+```
+npm run build
+```
+5. 打包后，react和react-dom通过CDN引入，包体积从 524k 缩小到 33.6k
+
+

@@ -6,6 +6,7 @@ const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plug
 const Cssnano = require('cssnano');
 // const CleanWebpackPlugin = require('clean-webpack-plugin'); // v2+用法
 const { CleanWebpackPlugin } = require('clean-webpack-plugin'); // v3+用法
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
 const setMPA = () => {
   const entry = {};
@@ -167,7 +168,21 @@ module.exports = {
       cssProcessor: Cssnano
     }),
     // 构建前自动清理dist
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new HtmlWebpackExternalsPlugin({
+      externals: [
+        {
+          module: 'react',
+          entry: 'https://11.url.cn/now/lib/16.2.0/react.min.js', // https://unpkg.com/react@16/umd/react.development.js
+          global: 'React'
+        }, 
+        {
+          module: 'react-dom',
+          entry: 'https://11.url.cn/now/lib/16.2.0/react-dom.min.js', // https://unpkg.com/react-dom@16/umd/react-dom.development.js
+          global: 'ReactDOM'
+        }
+      ]
+    })
   ].concat(htmlWebpackPlugins),
   devtool: 'inline-source-map'
 };
