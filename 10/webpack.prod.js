@@ -6,7 +6,7 @@ const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plug
 const Cssnano = require('cssnano');
 // const CleanWebpackPlugin = require('clean-webpack-plugin'); // v2+用法
 const { CleanWebpackPlugin } = require('clean-webpack-plugin'); // v3+用法
-const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+// const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
 const setMPA = () => {
   const entry = {};
@@ -31,7 +31,7 @@ const setMPA = () => {
           // template: './src/index.html'
           template: path.join(__dirname, 'src/index.html'), // 模板位置
           filename: `${pageName}.html`, // 打包出的html文件名称
-          chunks: [pageName], // html使用那些chunk，包含所有入口文件
+          chunks: ['vendors', pageName], // html使用那些chunk，包含所有入口文件
           inject: true, // | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中，如果设置为 true 或者 body，所有的 javascript 资源将被放置到 body 元素的底部，'head' 将放置到 head 元素中。
           minify: {
             html5: true, // true 根据HTML5规范解析输入
@@ -169,20 +169,31 @@ module.exports = {
     }),
     // 构建前自动清理dist
     new CleanWebpackPlugin(),
-    new HtmlWebpackExternalsPlugin({
-      externals: [
-        {
-          module: 'react',
-          entry: 'https://11.url.cn/now/lib/16.2.0/react.min.js', // https://unpkg.com/react@16/umd/react.development.js
-          global: 'React'
-        }, 
-        {
-          module: 'react-dom',
-          entry: 'https://11.url.cn/now/lib/16.2.0/react-dom.min.js', // https://unpkg.com/react-dom@16/umd/react-dom.development.js
-          global: 'ReactDOM'
-        }
-      ]
-    })
+    // new HtmlWebpackExternalsPlugin({
+    //   externals: [
+    //     {
+    //       module: 'react',
+    //       entry: 'https://11.url.cn/now/lib/16.2.0/react.min.js', // https://unpkg.com/react@16/umd/react.development.js
+    //       global: 'React'
+    //     }, 
+    //     {
+    //       module: 'react-dom',
+    //       entry: 'https://11.url.cn/now/lib/16.2.0/react-dom.min.js', // https://unpkg.com/react-dom@16/umd/react-dom.development.js
+    //       global: 'ReactDOM'
+    //     }
+    //   ]
+    // })
   ].concat(htmlWebpackPlugins),
-  devtool: 'inline-source-map'
+  devtool: 'inline-source-map',
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /(react|react-dom)/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
+  }
 };

@@ -710,4 +710,32 @@ npm run build
 ```
 5. 打包后，react和react-dom通过CDN引入，包体积从 524k 缩小到 33.6k
 
-
+#### optimization.splitChunks
+1. 10\webpack.prod.js
+```
+module.exports = {
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /(react|react-dom)/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
+  }
+}
+```
+2. 将 splitChunks 的 name 添加到 htmlWebpackPlugins中，这样页面才能引用到
+```
+  // html模板及压缩
+  new HtmlWebpackPlugin({
+    chunks: ['vendors', pageName], // html使用那些chunk，包含所有入口文件
+  }))
+```
+4. 打包
+```
+npm run build
+```
+5. 打包后，react和react-dom被分离出单独的js文件：bundle_vendors_d1a4f3d7.js
