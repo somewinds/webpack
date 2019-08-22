@@ -194,10 +194,10 @@ module.exports = {
           name: 'vendors',
           chunks: 'all'
         },
-        myCommons: {
+        myCommons: { // 该模块的作用：被引用的次数大于等于2的文件被打包进名为 my_commons 的 chunk 内
           name: 'my_commons',
           chunks: 'all',
-          minChunks: 1 // 最小引用文件的次数
+          minChunks: 2 // 最小引用文件的次数
         }
       }
     }

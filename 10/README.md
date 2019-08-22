@@ -758,7 +758,7 @@ export function common() {
           name: 'vendors',
           chunks: 'all'
         },
-        myCommons: {
+        myCommons: { // 该模块的作用：被引用的次数大于等于2的文件被打包进名为 my_commons 的 chunk 内
           name: 'my_commons',
           chunks: 'all',
           minChunks: 2 // 最小引用文件的次数
@@ -795,3 +795,61 @@ document.write(common());
 npm run build
 ```
 6. 打包后，my_commons 被分离出单独的js文件：bundle_my_commons_08b106d8.js
+
+
+### 29. tree shaking的使用和原理分析
+tree shaking 摇树优化：摇树时会把没用的叶子摇掉，即 没用的代码在编译时不会被打包。mode: "production" 默认开启，none 关闭
+
+DCE（Elimination）：
+1. 代码不会被执行，不可到达
+2. 代码执行的结果不会被用到
+3. 代码只会影响死变量（只写不读）
+
+```
+if(false) {
+  console.log('这段代码永远不会被执行');
+}
+```
+
+tree-sharking 对无用的代码进行静态分析，在编译的时候对无用的代码进行注释标记，在 uglify 阶段删除注释的（无用的）代码。
+
+1. 10\src\index\tree-sharking.js
+```
+// 测试 tree-sharking
+export function a(){
+  return '测试 tree-sharking a';
+}
+
+export function b(){
+  return '测试 tree-sharking b';
+}
+```
+2. 10\src\index\react-dom-search.js
+```
+import { a, b } from './tree-sharking'
+
+if(false){
+  console.log(b());
+}
+
+class Search extends React.Component {
+  render() {
+    const treeSharkingText = a();
+    return <div class="search">
+      <div>{ treeSharkingText }</div>
+    </div>
+  }
+}
+
+// 将 Search 渲染到 app 节点上
+ReactDOM.render(
+  <Search></Search>,
+  document.getElementById('app')
+);
+```
+3. 打包
+```
+npm run build
+```
+4. 打包后，10\dist\bundle_index_371acc9c.js 内能找到 "测试 tree-sharking a"，但是找不到 "测试 tree-sharking b"
+
