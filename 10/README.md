@@ -853,3 +853,22 @@ npm run build
 ```
 4. 打包后，10\dist\bundle_index_371acc9c.js 内能找到 "测试 tree-sharking a"，但是找不到 "测试 tree-sharking b"
 
+### 30. Scope Hoisting使用和原理分析
+
+普通打包：
+1. 大量函数闭包包裹代码，导致体积增大（模块越多越明显）
+2. 运行代码时创建的函数作用域名变多，内存开销变大
+
+webpack 模块转换分析：
+1. 被 webpack 转换后的模块会带上一层包裹
+2. import 会被转换成 __webpack_require
+3. export 也会被转换成处理后的结果
+
+scope hositing  
+- 原理：
+将所有模块的代码按照模块，按照引用顺序放在一个函数作用域里，然后适当的重命名一些变量以防止变量名冲突。
+- 对比：
+通过 scope hositing 可以减少函数声明代码和内存开销。
+
+webpack@3：new webpack.optimize.ModuleConcatenationPlugin()  
+webpack@4：mode: 'production' 默认开启

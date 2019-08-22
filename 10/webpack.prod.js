@@ -64,7 +64,7 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle_[name]_[chunkhash:8].js'
   },
-  mode: 'production',
+  mode: 'none',
   module: {
     rules: [
       {
