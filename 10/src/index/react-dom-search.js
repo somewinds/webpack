@@ -4,6 +4,7 @@ import './search.css';
 import './search.less';
 import bakugou from '../images/bakugou.jpg';
 import { a, b } from './tree-sharking'
+import largeNumber from 'large-number-cielsys'
 
 if(false){
   console.log(b());
@@ -31,6 +32,7 @@ class Search extends React.Component {
   render() {
     const { Text } = this.state;
     const treeSharkingText = a();
+    const addResult = largeNumber('999', '1');
     return <div className="search">
       Search
       <div className="text">search-text</div>
@@ -38,6 +40,7 @@ class Search extends React.Component {
       {
         Text ? <Text/> : null
       }
+      { addResult }
       <div>{ treeSharkingText }</div>
     </div>
   }

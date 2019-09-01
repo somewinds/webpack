@@ -1011,3 +1011,245 @@ module.exports = {
 }
 ```
 4. 编译
+
+## 33. webpack打包组件和基础库
+
+webpack 除了可以用来打包应用，也可以用来打包 js 库
+
+实现一个大整数加法库的打包 LargeNumber，需求：
+- 需要打包压缩版和非压缩版本
+- 支持 AMD/CJS/ESM 模块引入
+- 打包输出库的名称：
+  - 未压缩版 large-number.js
+  - 压缩版 large-number.min.js
+- 支持 ES Module
+```
+import * as largeNumber from 'large-number'
+// ...
+largeNumber.add('999', '1');
+```
+- 支持 CJS
+```
+const largeNumber = require('large-number')
+// ...
+largeNumber.add('999', '1');
+```
+- 支持 AMD
+```
+require(['large-number'], function(largeNumber) {
+  // ...
+  largeNumber.add('999', '1');
+}
+```
+- 可以直接通过 script 引入
+
+如何将库暴露出去？
+- library：指定库的全局变量
+- libraryTarget：支持库引入的方式
+
+Terser 区别于 uglifyjs，它在压缩的过程能识别ES6
+
+
+测试用例
+```
+add('999', '1');
+add('1', '999');
+add('123', '321');
+add('999999999999999999999999999999999999999999999999999999999999', '1');
+```
+
+1. 新建项目
+large-number
+```
+npm init -y
+npm i -D webpack webpack-cli
+```
+2. 新建方法库文件
+large-number\src\index.js
+```
+// 大整数加法
+export default function add(a, b) {
+  let i = a.length - 1;
+  let j = b.length - 1;
+
+  let carry = 0; // 进位
+  let ret = ''; // 和
+  while (i >= 0 || j >= 0) {
+
+    let x = 0; // a的i位数上的值
+    let y = 0; // b的j位数上的值
+    let sum = 0; // 求和的值
+
+    if (i >= 0) {
+      x = +a[i];
+      i--;
+    }
+    if (j >= 0) {
+      y = +b[j];
+      j--;
+    }
+    sum = x + y + carry;
+    console.log(sum)
+    if (sum >= 10) { // 如果sum大于等于10，减10并进一位
+      carry = 1;
+      sum -= 10;
+    } else {
+      carry = 0
+    }
+    // 将sum累加到ret字符串前 0 + ''
+    ret = sum + ret;
+  }
+
+  // 计算完如果仍有进位，累加到ret
+  if (carry) {
+    ret = 1 + ret;
+  }
+
+  return ret;
+}
+
+// add('999', '1');
+// add('1', '999');
+// add('123', '321');
+// add('999999999999999999999999999999999999999999999999999999999999', '1');
+```
+3. 新建配置文件
+webpack.config.js
+```
+const TerserPlugin = require('terser-webpack-plugin');
+
+module.exports = {
+  entry: {
+    'large-number': './src/index.js',
+    'large-number.min': './src/index.js',
+  },
+  output: {
+    filename: '[name].js', // 打包结果：large-number.js 和 large-number.min.js
+    library: 'largeNumber', // 打包出来的库的名字
+    libraryTarget: 'umd',
+    libraryExport: 'default' // 如果不设置为 default，那么使用的时候：largeNumber.default()
+  },
+  mode: 'none', // 不使用 production，防止打包开发版（large-number.js）的时候也被压缩
+  // 通过 include 设置只压缩 min.js 结尾的文件
+  optimization: {
+    minimize: true,
+    minimizer: [
+      // Terser 区别于 uglifyjs，它在压缩的过程能识别ES6
+      new TerserPlugin({
+        include: /\.min\.js$/,
+      })
+    ]
+  }
+}
+```
+4. 引入依赖：压缩插件
+```
+npm i -D terser-plugin
+```
+5. package.json配置：
+```
+{
+  "name": "large-number-cielsys",
+  "version": "1.0.0",
+  "description": "大整数加法",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "perpublish": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "terser-webpack-plugin": "^1.4.1",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
+  }
+}
+```
+6. package.json中main文件创建
+```
+if(process.env.NODE_ENV === 'production'){
+  module.exports = require('./dist/large-number.min.js');
+} else {
+  module.exports = require('./dist/large-number.js');
+}
+```
+7. 打包方法库
+```
+npm run build
+```
+8. 登录npm
+```
+npm login
+```
+9. 发布到npm
+```
+npm publish
+```
+10. 在项目中引入方法库
+```
+npm i -D large-number-cielsys
+```
+11. 使用方法库
+10\src\index\react-dom-search.js
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './search.css';
+import './search.less';
+import bakugou from '../images/bakugou.jpg';
+import { a, b } from './tree-sharking'
+import largeNumber from 'large-number-cielsys'
+
+if(false){
+  console.log(b());
+}
+
+class Search extends React.Component {
+
+  constructor(){
+    super(...arguments);
+
+    this.state = {
+      Text: null
+    }
+  }
+
+  loadComponent(){
+    // 返回的是一个Promise对象
+    import('./text.js').then((Text) => {
+      this.setState({
+        Text: Text.default
+      })
+    })
+  }
+
+  render() {
+    const { Text } = this.state;
+    const treeSharkingText = a();
+    const addResult = largeNumber('999', '1');
+    return <div className="search">
+      Search
+      <div className="text">search-text</div>
+      <img src={ bakugou } onClick={ this.loadComponent.bind(this) } />
+      {
+        Text ? <Text/> : null
+      }
+      { addResult }
+      <div>{ treeSharkingText }</div>
+    </div>
+  }
+}
+
+// 将 Search 渲染到 app 节点上
+ReactDOM.render(
+  <Search></Search>,
+  document.getElementById('app')
+);
+```
+12. 编译并查看 index.html
+```
+npm run build
+```
