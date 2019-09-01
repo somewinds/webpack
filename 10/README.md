@@ -1,4 +1,5 @@
-### 15. 解析ES6和React JSX
+
+## 15. 解析ES6和React JSX
 
 #### 解析ES6
 ```
@@ -90,7 +91,7 @@ import "./react-dom-search.js";
 
 ---
 
-### 16. 解析CSS、Less和Sass
+## 16. 解析CSS、Less和Sass
 
 #### 解析CSS
 ```
@@ -169,7 +170,7 @@ import './search.less';
 
 ---
 
-### 17. 解析图片和文字
+## 17. 解析图片和文字
 
 #### 解析图片
 ```
@@ -219,7 +220,7 @@ webpack.config.js
       }
 ```
 
-### 18. webpack中的文件监听
+## 18. webpack中的文件监听
 
 #### 方法一：
 
@@ -247,7 +248,7 @@ module.exports = {
 };
 ```
 
-### 19. webpack中的热更新及原理分析
+## 19. webpack中的热更新及原理分析
 
 ```
 npm i webpack-dev-server -D
@@ -276,7 +277,7 @@ const webpack = require('webpack');
   }
 ```
 
-### 20. 文件指纹策略：chunkhash、contenthash和hash
+## 20. 文件指纹策略：chunkhash、contenthash和hash
 
 package.json
 ```
@@ -349,7 +350,7 @@ module.exports = {
 };
 ```
 
-### 21. HTML、CSS和JS代码压缩
+## 21. HTML、CSS和JS代码压缩
 
 ```
 npm i optimize-css-assets-plugin cssnano -D
@@ -405,12 +406,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
   ],
 ```
 
-### 22. 自动清理构建目录产物
+## 22. 自动清理构建目录产物
 
 ```
 npm i clean-webpack-plugin -D
 ```
-
 
 [clean-webpack-plugin 使用说明](https://www.npmjs.com/package/clean-webpack-plugin)
 
@@ -426,7 +426,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin'); // v3+用法
 ```
 
 
-### 23. PostCSS插件autoprefixer自动补齐CSS3前缀
+## 23. PostCSS插件autoprefixer自动补齐CSS3前缀
 
 ```
 npm i -D postcss autoprefixer
@@ -468,7 +468,7 @@ npm i -D postcss autoprefixer
 ```
 
 
-### 24. 移动端CSS px自动转换成rem
+## 24. 移动端CSS px自动转换成rem
 px2rem、手淘 lib-flexible 库
 
 ```
@@ -508,7 +508,7 @@ module.rules 里less-loader应该写在px2rem-loader后面，不然会报错
 ```
 
 
-### 25. 静态资源内联
+## 25. 静态资源内联
 
 代码层面：
 - 页面框架的初始化脚本
@@ -551,7 +551,7 @@ npm i -D lib-flexible raw-loader
 </head>
 ```
 
-### 26. 多页面应用打包通用方案
+## 26. 多页面应用打包通用方案
 
 entry 用法：
 
@@ -663,13 +663,13 @@ module.exports = {
 };
 ```
 
-### 27. 使用sourcemap
+## 27. 使用sourcemap
 
 作用：通过 sourcemap 定位到源代码  
 开发环境开启，线上环境关闭
 
 
-### 28. 提取页面公共资源
+## 28. 提取页面公共资源
 
 #### html-webpack-externals-plugin
 1. 引入
@@ -797,7 +797,7 @@ npm run build
 6. 打包后，my_commons 被分离出单独的js文件：bundle_my_commons_08b106d8.js
 
 
-### 29. tree shaking的使用和原理分析
+## 29. tree shaking的使用和原理分析
 tree shaking 摇树优化：摇树时会把没用的叶子摇掉，即 没用的代码在编译时不会被打包。mode: "production" 默认开启，none 关闭
 
 DCE（Elimination）：
@@ -853,7 +853,7 @@ npm run build
 ```
 4. 打包后，10\dist\bundle_index_371acc9c.js 内能找到 "测试 tree-sharking a"，但是找不到 "测试 tree-sharking b"
 
-### 30. Scope Hoisting使用和原理分析
+## 30. Scope Hoisting使用和原理分析
 
 普通打包：
 1. 大量函数闭包包裹代码，导致体积增大（模块越多越明显）
@@ -874,7 +874,7 @@ webpack@3：new webpack.optimize.ModuleConcatenationPlugin()
 webpack@4：mode: 'production' 默认开启
 
 
-### 31. 代码分割和动态import
+## 31. 代码分割和动态import
 
 首屏一般不会加载所有页面/文件，所以分割出来只加载需要的文件。
 
@@ -958,3 +958,56 @@ ReactDOM.render(
   document.getElementById('app')
 );
 ```
+
+## 32. webpack和ESLint结合
+
+原则：
+1. 不重复造轮子，给予 eslint:recommend 配置并改进
+2. 能够帮助发小代码错误的规则，全部开启
+3. 帮助保持团队的代码风格统一，而不是限制开发体验
+
+1. 和 CI/CD 系统集成
+2. 和 webpack 集成 eslint-babel
+
+
+1. 引入 eslint 相关依赖
+```
+npm install --save-dev eslint eslint-plugin-import eslint-plugin-react eslint-plugin-jsx-a11y eslint-loader eslint-config-airbnb babel-eslint
+```
+2. 修改配置文件
+10\webpack.prod.js
+```
+
+module.exports = {
+ 
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: [
+          'babel-loader',
+          'eslint-loader'
+        ]
+      },
+    ]
+  }
+}
+```
+3. 引入 eslint 配置
+.eslintrc.js
+
+[ESLint - Pluggable JavaScript linter - ESLint中文](https://cn.eslint.org/)
+```
+module.exports = {
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "indent": ["error", 2]
+  }
+}
+```
+4. 编译
