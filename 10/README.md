@@ -872,3 +872,89 @@ scope hositing
 
 webpack@3：new webpack.optimize.ModuleConcatenationPlugin()  
 webpack@4：mode: 'production' 默认开启
+
+
+### 31. 代码分割和动态import
+
+首屏一般不会加载所有页面/文件，所以分割出来只加载需要的文件。
+
+1. 抽离相同代码到一个共享块
+2. 脚本懒加载，使初始下载代码更小
+
+加载方式：
+1. CommonJS：require.ensure
+2. ES6：动态 import （目前还没有原生支持，需要 babel 转换）
+
+使用jsonp去动态引入js
+
+1. 安装babel
+```
+npm install --save-dev @babel/plugin-syntax-dynamic-import
+```
+2. .babelrc
+```
+{
+  "plugins": ["@babel/plugin-syntax-dynamic-import"]
+}
+```
+3. 新建一个用以动态加载的js文件
+10\src\index\text.js
+```
+import React from 'react'
+
+export default() => <div>动态 import</div>
+```
+4. 引入这个文件，并通过事件触发加载
+10\src\index\react-dom-search.js
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './search.css';
+import './search.less';
+import bakugou from '../images/bakugou.jpg';
+import { a, b } from './tree-sharking'
+
+if(false){
+  console.log(b());
+}
+
+class Search extends React.Component {
+
+  constructor(){
+    super(...arguments);
+
+    this.state = {
+      Text: null
+    }
+  }
+
+  loadComponent(){
+    // 返回的是一个Promise对象
+    import('./text.js').then((Text) => {
+      this.setState({
+        Text: Text.default
+      })
+    })
+  }
+
+  render() {
+    const { Text } = this.state;
+    const treeSharkingText = a();
+    return <div className="search">
+      Search
+      <div className="text">search-text</div>
+      <img src={ bakugou } onClick={ this.loadComponent.bind(this) } />
+      {
+        Text ? <Text/> : null
+      }
+      <div>{ treeSharkingText }</div>
+    </div>
+  }
+}
+
+// 将 Search 渲染到 app 节点上
+ReactDOM.render(
+  <Search></Search>,
+  document.getElementById('app')
+);
+```

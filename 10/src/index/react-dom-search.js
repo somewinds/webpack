@@ -10,12 +10,34 @@ if(false){
 }
 
 class Search extends React.Component {
+
+  constructor(){
+    super(...arguments);
+
+    this.state = {
+      Text: null
+    }
+  }
+
+  loadComponent(){
+    // 返回的是一个Promise对象
+    import('./text.js').then((Text) => {
+      this.setState({
+        Text: Text.default
+      })
+    })
+  }
+
   render() {
+    const { Text } = this.state;
     const treeSharkingText = a();
-    return <div class="search">
+    return <div className="search">
       Search
-      <div class="text">search-text</div>
-      <img src={ bakugou } />
+      <div className="text">search-text</div>
+      <img src={ bakugou } onClick={ this.loadComponent.bind(this) } />
+      {
+        Text ? <Text/> : null
+      }
       <div>{ treeSharkingText }</div>
     </div>
   }
