@@ -13,12 +13,12 @@ const setMPA = () => {
   const htmlWebpackPlugins = [];
 
   // 使用 glob.sync 以通配符的形式匹配到入口文件
-  const entryFiles = glob.sync(path.join(__dirname, './src/!(common)*/index.js')); // 排除掉 common 文件夹
+  const entryFiles = glob.sync(path.join(__dirname, './src/!(common)*/index-server.js')); // 排除掉 common 文件夹
   // console.log(entryFiles);
   Object.keys(entryFiles)
     .map(index => {
       let entryFile = entryFiles[index];
-      const match = entryFile.match(/src\/(.*)\/index\.js/);
+      const match = entryFile.match(/src\/(.*)\/index-server\.js/);
       // console.log(match)
       const pageName = match && match[1];
 
@@ -64,7 +64,8 @@ module.exports = {
   }, */
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle_[name]_[chunkhash:8].js'
+    filename: '[name]-server.js', // 1
+    libraryTarget: 'umd' // 2
   },
   mode: 'none',
   module: {
