@@ -7,6 +7,7 @@ const Cssnano = require('cssnano');
 // const CleanWebpackPlugin = require('clean-webpack-plugin'); // v2+用法
 const { CleanWebpackPlugin } = require('clean-webpack-plugin'); // v3+用法
 // const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 const setMPA = () => {
   const entry = {};
@@ -174,6 +175,20 @@ module.exports = {
     }),
     // 构建前自动清理dist
     new CleanWebpackPlugin(),
+    // 友好的构建提示
+    new FriendlyErrorsWebpackPlugin(),
+    // 主动捕获并处理构建错误
+    function(){
+      this.hooks.done.tap('done', (stats) => {
+        console.log('done');
+        if(stats.compilation.errors &&
+          stats.compilation.errors.length &&
+          process.argv.indexOf('--watch') === -1){
+            console.log('build error');
+            process.exit();
+          }
+      })
+    }
     // new HtmlWebpackExternalsPlugin({
     //   externals: [
     //     {
@@ -206,5 +221,6 @@ module.exports = {
         }
       }
     }
-  }
+  },
+  stats: 'errors-only'
 };

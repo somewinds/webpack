@@ -1371,3 +1371,62 @@ const renderMarkup = (str) => {
   "name": "张三"
 }
 ```
+
+## 36. 优化构建时命令行的显示日志
+
+##### stats
+1. errors-only：只在发生错误时输出
+2. minimal：只在发生错误或有新的编译时输出
+3. none：没有输出
+4. normal：标准输出
+5. verbose：全部输出
+
+##### friendly-errors-webpack-plugin
+- success 构建成功
+- warning 构建警告
+- error 构建报错
+
+6. 10\webpack.prod.js
+```
+  stats: 'errors-only'
+```
+2. 引入 friendly-errors-webpack-plugin
+```
+npm i -D friendly-errors-webpack-plugin
+```
+3. 10\webpack.prod.js
+```
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+
+    // 友好的构建提示
+    new FriendlyErrorsWebpackPlugin()
+```
+
+## 37. 构建异常和中断处理
+
+- webpack4 之前的版本构建失败不会抛出错误码。
+- Node.js 中的 process.exit 规范：
+  - 0 表示成功完成，回调函数中，err 为 null
+  - 非 0 表示执行失败，回调函数中，err 不为 null，err.code 就是传给 exit 的数字
+
+#### 如何主动捕获并处理构建错误
+1. compiler 在每次构建结束后会触发 done 这个 hook
+2. process.exit 主动处理构建报错
+
+10\webpack.prod.js
+```
+  plugins: [
+
+    // 主动捕获并处理构建错误
+    function(){
+      this.hooks.done.tap('done', (stats) => {
+        console.log('done');
+        if(stats.compilation.errors &&
+          stats.compilation.errors.length &&
+          process.argv.indexOf('--watch') === -1){
+            console.log('build error');
+            process.exit();
+          }
+      })
+    }
+```
