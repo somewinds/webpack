@@ -1,0 +1,19 @@
+{
+  "name": "linhui-parse-px",
+  "version": "0.0.2",
+  "description": "工具类函数：处理 uni-app 文件，将文件内的 px 按系数替换为 upx",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "linhui-parse": "bin/parse.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^3.0.1"
+  },
+  "devDependencies": {}
+}
