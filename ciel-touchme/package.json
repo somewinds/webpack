@@ -1,0 +1,22 @@
+{
+  "name": "ciel-touchme",
+  "version": "0.0.2",
+  "description": "十分钟通过 npm 创建一个命令行工具 https://juejin.im/post/5c583a8fe51d457fd77b1284",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "perpublish": "webpack",
+    "parse": "linhui-parse"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "commander": "^3.0.1",
+    "terser-webpack-plugin": "^1.4.1",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
+  },
+  "dependencies": {}
+}

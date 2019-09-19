@@ -1,0 +1,22 @@
+{
+  "name": "linhui-parse-px-to-upx",
+  "version": "1.0.6",
+  "description": "工具类函数：处理文件，将文件内的 px替换为upx",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "perpublish": "webpack"
+  },
+  "bin": {
+    "linhui-parse": "bin/parse.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "terser-webpack-plugin": "^1.4.1",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
+  }
+}
