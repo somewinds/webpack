@@ -1113,7 +1113,11 @@ export default function add(a, b) {
 // add('123', '321');
 // add('999999999999999999999999999999999999999999999999999999999999', '1');
 ```
-3. 新建配置文件
+3. 引入依赖：压缩插件
+```
+npm i -D terser-plugin
+```
+4. 新建配置文件
 webpack.config.js
 ```
 const TerserPlugin = require('terser-webpack-plugin');
@@ -1141,10 +1145,6 @@ module.exports = {
     ]
   }
 }
-```
-4. 引入依赖：压缩插件
-```
-npm i -D terser-plugin
 ```
 5. package.json配置：
 ```
@@ -1433,7 +1433,65 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 ## 38. 构建配置包设计
 
+#### 构建配置抽离成npm包的意义：
+
+1. 通用性
+  - 业务开发者无需关注构建配置
+  - 同一团队构建脚本
+2. 可维护性
+  - 构建配置合理的拆分
+  - README 文档、ChangeLog 文档等
+3. 质量
+  - 猫眼测试、单元测试、测试覆盖率
+  - 持续集成
+
+#### 可选方案：
+
+1. 通过多个配置文件管理不同环境的构建，webpack --config 参数进行控制
+2. 将构建配置设计成一个库，比如：hjs-webpack、Neutrino、webpack-blocks
+3. 抽成一个工具进行管理，比如：create-react-app，kyt，nwb
+4. 将所有配置放在一个文件，通过 --env 参数控制分支选择
 
 
+## 39. 功能模块设计和目录结构
+
+#### 功能模块设计
+
+1. 基础配置
+   1. 资源解析
+      1. 解析 ES6
+      2. 解析 React
+      3. 解析 CSS
+      4. 解析 Less
+      5. 解析图片
+      6. 解析字体
+   2. 样式增强
+      1. CSS 前缀补齐
+      2. CSS px 转换成 rem
+   3. 目录清理
+   4. 多页面打包
+   5. 命令行信息显示优化
+   6. 错误捕获和处理
+   7. CSS 提取成一个单独的文件
+2. 开发阶段配置
+   1. 代码热更新
+      1. CSS 热更新
+      2. JS 热更新
+   2. sourcemap
+3. 生产阶段配置
+   1. 代码压缩
+   2. 文件指纹
+   3. Tree Shaking
+   4. Scope Hositing
+   5. 速度优化
+      1. 基础包 CDN
+   6. 体积优化
+      1. 代码分割 optimization
+4. SSR 配置
+   1. output的 libraryTarget 设置
+   2. CSS 解析 ignore
 
 
+```
+npm install --save-dev webpack-merge
+```
