@@ -1495,3 +1495,10 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 ```
 npm install --save-dev webpack-merge
 ```
+
+## 40. 使用ESLint规范构建脚本
+
+使用 eslint-config-airbnb-base
+
+eslint --fix 可以自动处理空格
+

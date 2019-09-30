@@ -12,9 +12,9 @@ const devConfig = {
   devServer: {
     contentBase: './dist',
     hot: true,
-    stats: 'errors-only'
+    stats: 'errors-only',
   },
-  devtool: 'cheap-source-map'
+  devtool: 'cheap-source-map',
 };
 
 module.exports = Merge(baseConfig, devConfig);
