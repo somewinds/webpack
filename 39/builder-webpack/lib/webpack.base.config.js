@@ -9,6 +9,8 @@ const {
 } = require('clean-webpack-plugin'); // v3+用法
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
+// 把 __dirname 进行替换为当前目录
+const projectRoot = process.cwd();
 
 // 多入口文件
 const setMPA = () => {
@@ -16,7 +18,7 @@ const setMPA = () => {
   const htmlWebpackPlugins = [];
 
   // 使用 glob.sync 以通配符的形式匹配到入口文件
-  const entryFiles = glob.sync(path.join(__dirname, './src/!(common)*/index.js')); // 排除掉 common 文件夹
+  const entryFiles = glob.sync(path.join(projectRoot, './src/!(common)*/index.js')); // 排除掉 common 文件夹
   // console.log(entryFiles);
   Object.keys(entryFiles)
     .forEach((index) => {
@@ -33,7 +35,7 @@ const setMPA = () => {
           // html模板及压缩
           new HtmlWebpackPlugin({
             // template: './src/index.html'
-            template: path.join(__dirname, 'src/index.html'), // 模板位置
+            template: path.join(projectRoot, 'src/index.html'), // 模板位置
             filename: `${pageName}.html`, // 打包出的html文件名称
             chunks: ['vendors', 'my_commons', pageName], // html使用那些chunk，包含所有入口文件
             // | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中
